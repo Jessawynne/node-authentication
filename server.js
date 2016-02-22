@@ -3,6 +3,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
+//RedisStore must come after session
+const RedisStore = require('connect-redis')(session);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -12,8 +14,17 @@ app.set('view engine', 'jade');
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(session({
-  secret: SESSION_SECRET
+  secret: SESSION_SECRET, 
+  store: new RedisStore()
 }));
+
+//middleware function for session obj
+app.use((req, res, next) => {
+  req.session.count = req.session.count || 0;
+  req.session.count++;
+  console.log(req.session);
+  next();
+});
 
 app.get('/', (req, res) => {
   res.render('index');
