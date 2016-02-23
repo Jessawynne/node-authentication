@@ -1,3 +1,6 @@
+each msgs, type in messages
+  for msg in msgs
+    p(class=type)=msg
 if user
   h1 Hello #{user.email}
 
@@ -5,6 +8,6 @@ if user
     input(type='submit', value='Logout')
 else
   h1 Hello Guest
-  
+
   form(action='/login', method='GET')
     input(type='submit', value='Login')

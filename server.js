@@ -2,6 +2,7 @@
 
 const bodyParser = require('body-parser');
 const express = require('express');
+const flash = require('connect-flash');
 const methodOverride = require('method-override');
 const mongoose = require('mongoose');
 const passport = require('passport');
@@ -22,6 +23,7 @@ app.use(session({
   secret: SESSION_SECRET, 
   store: new RedisStore()
 }));
+app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -30,10 +32,16 @@ app.use(userRoutes);
 app.locals.title = '';
 
 app.use((req, res, next) => {
-  console.log(req);
   res.locals.user = req.user;
   next();
 });
+
+app.use((req, res, next) => {
+  res.locals.messages = req.flash();
+  next();
+});
+
+app.use(userRoutes);
 
 app.get('/', (req, res) => {
   res.render('index');
